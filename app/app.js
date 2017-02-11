@@ -28,14 +28,12 @@ d3.json(url, (jsonData) => {
     console.log("keyArray: " + keyArray);
     console.log("maxTemp: " + maxTemp);
     console.log("minTemp: " + minTemp );
-
-
     console.log("data" + data);
     console.log("baseTemp" + baseTemp);
     console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 
       // set the dimensions of the canvas
-    let canvasHeight = 280;
+    let canvasHeight = 380;
     let margin = {top: 60, right: 40, bottom: 40, left: 70},
       width = 600 - margin.left - margin.right,
       height = canvasHeight - margin.top - margin.bottom;
