@@ -88,13 +88,12 @@
 	    console.log("keyArray: " + keyArray);
 	    console.log("maxTemp: " + maxTemp);
 	    console.log("minTemp: " + minTemp);
-	
 	    console.log("data" + data);
 	    console.log("baseTemp" + baseTemp);
 	    console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 	
 	    // set the dimensions of the canvas
-	    var canvasHeight = 280;
+	    var canvasHeight = 380;
 	    var margin = { top: 60, right: 40, bottom: 40, left: 70 },
 	        width = 600 - margin.left - margin.right,
 	        height = canvasHeight - margin.top - margin.bottom;
