@@ -33,10 +33,9 @@ d3.json(url, (jsonData) => {
     console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 
       // set the dimensions of the canvas
-    let canvasHeight = 380;
-    let margin = {top: 60, right: 40, bottom: 40, left: 70},
-      width = 600 - margin.left - margin.right,
-      height = canvasHeight - margin.top - margin.bottom;
+    let margin = {top: 80, right: 40, bottom: 40, left: 70},
+      width = 800 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
 
       // set the ranges
     let x = d3.scaleLinear().range([0, width]);
@@ -83,7 +82,7 @@ d3.json(url, (jsonData) => {
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top/1.3))
         .attr("text-anchor", "middle")
-        .style("font-size", "0.9em")
+        .style("font-size", "1.0em")
         .style("text-decoration", "none")
         .text("Monthly Global Land-Surface Temperature");
 
@@ -92,54 +91,38 @@ d3.json(url, (jsonData) => {
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top/1.7))
         .attr("text-anchor", "middle")
-        .style("font-size", ".6em")
+        .style("font-size", ".7em")
         .style("text-decoration", "none")
         .html("1753-2015");
 
+    let axisTitles = "0.9em";
         //yAxis title
     svg.append("text")
-        .attr("x", -40)
-        .attr("y", -50)
+        .attr("x", -70)
+        .attr("y", -40)
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .style("font-size", "0.7em")
+        .style("font-size", axisTitles)
         .style("text-decoration", "none")
         .html("Month");
 
         //xAxis title
     svg.append("text")
         .attr("x", (width / 2))
-        .attr("y", height + 15)
+        .attr("y", height + 30)
         .attr("text-anchor", "middle")
-        .style("font-size", "0.7em")
+        .style("font-size", axisTitles)
         .style("text-decoration", "none")
         .html("Year");
 
-        //key description
-    let keyOffsetX = -30;
-    let keyLineSpacing = 8;
-    svg.append("text")
-        .attr("x", keyOffsetX)
-        .attr("y", height + 4)
-        .attr("text-anchor", "middle")
-        .style("font-size", "0.4em")
-        .style("text-decoration", "none")
-        .html("Temperature variance")
-        .append("tspan")
-            .attr("x", keyOffsetX)
-            .attr("dy", keyLineSpacing)
-            .html("from base temp of "+baseTemp+"")
-            .append("tspan")
-                    .attr("x", keyOffsetX)
-                    .attr("dy", keyLineSpacing)
-                    .html("degrees Celcius.");
+
 
         // add x axis
     svg.append("g")
         .attr("class", "xAxis")
         .style("font-size","0.5em")
         .call(xAxis)
-        .attr("transform", "translate(0," + (height -13) + ")")
+        .attr("transform", "translate(0," + (height -5) + ")")
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "1em")
@@ -184,7 +167,7 @@ d3.json(url, (jsonData) => {
             d3.select(this)
                 .attr("class", "barSelected")
             tooltip.style("visibility", "visible")
-                .style("font-size", "0.4em")
+                .style("font-size", "0.5em")
                 .style("top", (d3.event.pageY + 10) + "px")
                 .style("left", (d3.event.pageX) + "px")
                 .html(""+monthFormatter(d.month)+" "+d.year + "<br/>" +
@@ -201,9 +184,9 @@ d3.json(url, (jsonData) => {
         .data(keyArray)
         .enter().append("rect")
         .attr("class", "key")
-        .attr("x", function(d) {return (d*10)+80})
-        .attr("width", 10)
-        .attr("y", height + 5)
+        .attr("x", function(d) {return (d*11)+180})
+        .attr("width", 11)
+        .attr("y", height + 19)
         .attr("height",  10)
         .style("fill", function(d) {
             let red = 0;
@@ -220,13 +203,36 @@ d3.json(url, (jsonData) => {
             return "rgb("+(255-blue)+", "+green+","+(255-red)+")";
         })
 
+    //key description
+    let keyOffsetX = 50;
+    let keyLineSpacing = 8;
+    svg.append("text")
+        .attr("x", keyOffsetX)
+        .attr("y", height + 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "0.5em")
+        .style("text-decoration", "none")
+        .html("Temperature variance")
+        .append("tspan")
+            .attr("x", keyOffsetX)
+            .attr("dy", keyLineSpacing)
+            .html("from base temp of "+baseTemp+"")
+            .append("tspan")
+                .attr("x", keyOffsetX)
+                .attr("dy", keyLineSpacing)
+                .html("degrees Celcius.");
+
+        //key axis
     svg.append("g")
         .attr("class", "xAxis")
-        .style("font-size","0.3em")
+        .style("font-size","0.5em")
         .call(xAxis2)
-        .attr("transform", "translate(10," + (height + 15)  + ")")
+        .attr("transform", "translate(107," + (height + 29)  + ")")
         .selectAll("text")
         .style("text-anchor", "end")
-        .attr("dy", "0.5em");
+        .attr("dy", ".8em")
+        .attr("dx", ".5em");
+
+
 
 });
