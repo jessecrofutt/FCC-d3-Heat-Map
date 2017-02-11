@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/FCC-d3-Bar-Chart.iml" filepath="$PROJECT_DIR$/.idea/FCC-d3-Bar-Chart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/FCC-d3-Heat-Map.iml" filepath="$PROJECT_DIR$/.idea/FCC-d3-Heat-Map.iml" />
     </modules>
   </component>
 </project>

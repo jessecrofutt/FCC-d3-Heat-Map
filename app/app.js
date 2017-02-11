@@ -2,7 +2,7 @@ var d3 = require('d3');
 import _ from 'lodash';
 import './style/style.sass';
 
-let url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
+let url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json';
 let tooltip = d3.select("body")
     .append("div")
     .attr("class" , "tooltip")
@@ -11,179 +11,224 @@ let tooltip = d3.select("body")
     .style("visibility", "hidden")
     .text("no data");
 
-    // load the data
-let Doped = "blue";
-
 d3.json(url, (jsonData) => {
 
     let data = jsonData;
+    let baseTemp = data.baseTemperature;
+    let monthlyVariance = data.monthlyVariance.slice();
 
-        //loop to extract data year and month from fields
-    for (let i = 0; i < data.length; i++) {
-      let minutesSeconds = '';
-      minutesSeconds = data[i].Time;
+    let maxTemp = d3.max(monthlyVariance, function(d) { return d.variance; });
+    let minTemp = d3.min(monthlyVariance, function(d) { return d.variance; });
 
-      let a = minutesSeconds.split(':'); // split it at the colons
-      let seconds = (+a[0]) * 60 + (+a[1]);
+    let keyArray = [];
+    for (let i = Math.floor(minTemp); i < Math.ceil(maxTemp + 1); i++){
+        keyArray.push(i);
+    };
 
-      if (data[i].Doping !== "") {
-          data[i].Doped = "doped";
-      } else {
-          data[i].Doped = "clean";
-          data[i].Doping = "No Doping Allegations";
-      }
-      data[i].Seconds = seconds;
-    }
+    console.log("keyArray: " + keyArray);
+    console.log("maxTemp: " + maxTemp);
+    console.log("minTemp: " + minTemp );
+
+
+    console.log("data" + data);
+    console.log("baseTemp" + baseTemp);
+    console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 
       // set the dimensions of the canvas
-    let margin = {top: 70, right: 70, bottom: 70, left: 40},
+    let canvasHeight = 280;
+    let margin = {top: 60, right: 40, bottom: 40, left: 70},
       width = 600 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
+      height = canvasHeight - margin.top - margin.bottom;
 
       // set the ranges
     let x = d3.scaleLinear().range([0, width]);
+    let x2 = d3.scaleLinear().range([0, 10 * keyArray.length]);
     let y = d3.scaleLinear().range([height, 0]);
 
-
-    let timeFormatter = function(timeInSeconds) {
-        let minutes = Math.floor(timeInSeconds/60)
-        let seconds = timeInSeconds % 60;
-        if (seconds < 10) {
-            seconds = "0" + seconds;
-        }
-        return minutes + ":" + seconds;
+    let formatMonth = d3.timeFormat("%B");
+    let monthFormatter = function(monthNumber) {
+        let date = new Date(1111, monthNumber-1, 1);
+        return formatMonth(date);
     };
 
-      //d3.axis* Displays automatic reference lines for scales.
       // define the x axis
     let xAxis = d3.axisBottom()
         .scale(x)
+        .tickSize(4)
+        .tickFormat(d3.format("d"));
 
-        .tickFormat(timeFormatter)
-        .tickSize(8)
+    let xAxis2 = d3.axisBottom()
+        .scale(x2)
+        .tickSize(0);
 
         // define the y axis
     let yAxis = d3.axisLeft()
-        .scale(y);
+        .scale(y)
+        .tickSize(0)
+        .tickFormat(monthFormatter);
 
         // add the SVG element
     let svg = d3.select("body").append("svg")
-
         .attr("id", "svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        //.append("g") appends a 'g' element to the SVG. g element is used to group SVG shapes together, so no it's not d3 specific.
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // scale the range of the data
-    let minSeconds = data[0].Seconds;
-    let maxSeconds = data[data.length-1].Seconds;
-    let difSeconds = maxSeconds - minSeconds;
-    x.domain([difSeconds, 0]);
-
-        //An optional accessor function may be specified, which is equivalent to calling array.map(accessor) before computing the maximum value.
-    y.domain([d3.max(data, function(d) { return d.Place + 1; }), 1]);
+    x.domain([d3.min(monthlyVariance, function(d) { return d.year; }), d3.max(monthlyVariance, function(d) { return d.year; })]);
+    x2.domain(d3.extent(keyArray));
+    y.domain([d3.max(monthlyVariance, function(d) { return d.month; }), d3.min(monthlyVariance, function(d) { return d.month; })]);
 
       //title
     svg.append("text")
         .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top/1.5))
+        .attr("y", 0 - (margin.top/1.3))
         .attr("text-anchor", "middle")
-        .style("font-size", "20px")
+        .style("font-size", "0.9em")
         .style("text-decoration", "none")
-        .text("Doping in Professional Bicycle Racing");
-    svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top/3))
-        .attr("text-anchor", "middle")
-        .style("font-size", "16px")
-        .style("text-decoration", "none")
-        .html("35 fastest times ascending <a href='https://en.wikipedia.org/wiki/Alpe_dHuez'>Alpe d'Huez</a>");
-    svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top/9))
-        .attr("text-anchor", "middle")
-        .style("font-size", "14px")
-        .style("text-decoration", "none")
-        .text("Distance normalized to 13.8 km");
+        .text("Monthly Global Land-Surface Temperature");
 
-        //Left Side Credits
+        //subtitle
     svg.append("text")
-        .attr("x", -120)
-        .attr("y", -30)
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top/1.7))
+        .attr("text-anchor", "middle")
+        .style("font-size", ".6em")
+        .style("text-decoration", "none")
+        .html("1753-2015");
+
+        //yAxis title
+    svg.append("text")
+        .attr("x", -40)
+        .attr("y", -50)
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .style("font-size", "14px")
+        .style("font-size", "0.7em")
         .style("text-decoration", "none")
-        .html("Ranking");
+        .html("Month");
 
-        //Bottom of the page credits
+        //xAxis title
     svg.append("text")
         .attr("x", (width / 2))
-        .attr("y", height + 40)
+        .attr("y", height + 15)
         .attr("text-anchor", "middle")
-        .style("font-size", "14px")
+        .style("font-size", "0.7em")
         .style("text-decoration", "none")
-        .html("Time trailing the record");
+        .html("Year");
+
+        //key description
+    let keyOffsetX = -30;
+    let keyLineSpacing = 8;
+    svg.append("text")
+        .attr("x", keyOffsetX)
+        .attr("y", height + 4)
+        .attr("text-anchor", "middle")
+        .style("font-size", "0.4em")
+        .style("text-decoration", "none")
+        .html("Temperature variance")
+        .append("tspan")
+            .attr("x", keyOffsetX)
+            .attr("dy", keyLineSpacing)
+            .html("from base temp of "+baseTemp+"")
+            .append("tspan")
+                    .attr("x", keyOffsetX)
+                    .attr("dy", keyLineSpacing)
+                    .html("degrees Celcius.");
 
         // add x axis
-        //The ‘g’ element is a container element for grouping together related graphics elements.
     svg.append("g")
-        .attr("class", "x axis")
+        .attr("class", "xAxis")
+        .style("font-size","0.5em")
         .call(xAxis)
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(0," + (height -13) + ")")
         .selectAll("text")
         .style("text-anchor", "end")
-        .attr(    "dx", "1em")
-        .attr("dy", "1em")
+        .attr("dx", "1em")
+        .attr("dy", "0.5em");
 
         // add y axis
     svg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "yAxis")
+        .style("font-size","0.5em")
         .call(yAxis)
-      .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 5)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Ranking")
+        .attr("transform", "translate(0,-20)")
+        .append("text");
 
-
-
-    let node = svg.selectAll(".dot")
-        .data(data)
+    let node = svg.selectAll(".bar")
+        .data(monthlyVariance)
         .enter()
       .append("g")
-            .attr("class", "node")
+        .attr("class", "node");
 
-    node.append("circle")
-        .attr("class", function(d) {return d.Doped;})
-        .attr("r", 3.5)
-        .attr("cx", function(d) {return (x(d.Seconds - minSeconds));})
-        .attr("cy", function (d) {return y(d.Place); })
-        .style("background-color", Doped)
+    node.append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) {return x(d.year)})
+        .attr("width", Math.ceil(width/monthlyVariance.length/12)+0.5)
+        .attr("y", function (d) {return  (y(d.month)-30)})
+        .attr("height",  height/12 + 2)
+        .style("fill", function(d) {
+            let red = 0;
+            let blue = 0;
+            let green = 200;
+            let opacity = 1;
+            if (d.variance >= 0 ){
+                red = Math.ceil(d.variance * 255/(maxTemp + 0.01));
+                green -= red;
+            } else {
+                blue = Math.ceil(d.variance * 255/(minTemp + 0.01));
+                green -= blue;
+            }
+
+            return "rgb("+(255-blue)+", "+green+","+(255-red)+")";
+        })
         .on("mouseover", function(d){
-            d3.select(this).attr("class", "dotSelected")
-                .attr("r", 4.5);
+            d3.select(this)
+                .attr("class", "barSelected")
             tooltip.style("visibility", "visible")
+                .style("font-size", "0.4em")
                 .style("top", (d3.event.pageY + 10) + "px")
                 .style("left", (d3.event.pageX) + "px")
-                .html(d.Name + "<br/>" +
-                    d.Nationality + "<br/>" +
-                    "Time: "+d.Time + "<br/> Year: "+ d.Year + "<br/>" +
-                    " " + d.Doping);
+                .html(""+monthFormatter(d.month)+" "+d.year + "<br/>" +
+                    "Average Temp: "+(+(baseTemp + d.variance).toFixed(2)) + "&degC<br/>"+
+                    "Variance: "+(+(d.variance).toFixed(2)) + "&degC<br/>");
         })
         .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
         .on("mouseout", function(){
-            d3.select(this).attr("r", 3.5).attr("class", function(d) {return d.Doped;});
+            d3.select(this);
             tooltip.style("visibility", "hidden");
         })
-    node.append("text")
-            .attr("x", function(d) {return (x(d.Seconds - minSeconds))+5;})
-            .attr("y", function (d) {return y(d.Place) + 3; })
-            .style("font-size", "10px")
-            .style("text-decoration", "none")
-            .text(function(d) {return d.Name;})
+
+    svg.selectAll("key")
+        .data(keyArray)
+        .enter().append("rect")
+        .attr("class", "key")
+        .attr("x", function(d) {return (d*10)+80})
+        .attr("width", 10)
+        .attr("y", height + 5)
+        .attr("height",  10)
+        .style("fill", function(d) {
+            let red = 0;
+            let blue = 0;
+            let green = 200;
+            let opacity = 1;
+            if (d >= 0 ){
+                red = Math.ceil(d * 255/(maxTemp + 0.01));
+                green -= red;
+            } else {
+                blue = Math.ceil(d * 255/(minTemp + 0.01));
+                green -= blue;
+            }
+            return "rgb("+(255-blue)+", "+green+","+(255-red)+")";
+        })
+
+    svg.append("g")
+        .attr("class", "xAxis")
+        .style("font-size","0.3em")
+        .call(xAxis2)
+        .attr("transform", "translate(10," + (height + 15)  + ")")
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dy", "0.5em");
 
 });

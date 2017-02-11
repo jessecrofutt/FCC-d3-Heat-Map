@@ -64,118 +64,147 @@
 	var d3 = __webpack_require__(12);
 	
 	
-	var url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
+	var url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json';
 	var tooltip = d3.select("body").append("div").attr("class", "tooltip").style("position", "absolute").style("z-index", "10").style("visibility", "hidden").text("no data");
-	
-	// load the data
-	var Doped = "blue";
 	
 	d3.json(url, function (jsonData) {
 	
 	    var data = jsonData;
+	    var baseTemp = data.baseTemperature;
+	    var monthlyVariance = data.monthlyVariance.slice();
 	
-	    //loop to extract data year and month from fields
-	    for (var i = 0; i < data.length; i++) {
-	        var minutesSeconds = '';
-	        minutesSeconds = data[i].Time;
+	    var maxTemp = d3.max(monthlyVariance, function (d) {
+	        return d.variance;
+	    });
+	    var minTemp = d3.min(monthlyVariance, function (d) {
+	        return d.variance;
+	    });
 	
-	        var a = minutesSeconds.split(':'); // split it at the colons
-	        var seconds = +a[0] * 60 + +a[1];
+	    var keyArray = [];
+	    for (var i = Math.floor(minTemp); i < Math.ceil(maxTemp + 1); i++) {
+	        keyArray.push(i);
+	    };
 	
-	        if (data[i].Doping !== "") {
-	            data[i].Doped = "doped";
-	        } else {
-	            data[i].Doped = "clean";
-	            data[i].Doping = "No Doping Allegations";
-	        }
-	        data[i].Seconds = seconds;
-	    }
+	    console.log("keyArray: " + keyArray);
+	    console.log("maxTemp: " + maxTemp);
+	    console.log("minTemp: " + minTemp);
+	
+	    console.log("data" + data);
+	    console.log("baseTemp" + baseTemp);
+	    console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 	
 	    // set the dimensions of the canvas
-	    var margin = { top: 70, right: 70, bottom: 70, left: 40 },
+	    var canvasHeight = 280;
+	    var margin = { top: 60, right: 40, bottom: 40, left: 70 },
 	        width = 600 - margin.left - margin.right,
-	        height = 500 - margin.top - margin.bottom;
+	        height = canvasHeight - margin.top - margin.bottom;
 	
 	    // set the ranges
 	    var x = d3.scaleLinear().range([0, width]);
+	    var x2 = d3.scaleLinear().range([0, 10 * keyArray.length]);
 	    var y = d3.scaleLinear().range([height, 0]);
 	
-	    var timeFormatter = function timeFormatter(timeInSeconds) {
-	        var minutes = Math.floor(timeInSeconds / 60);
-	        var seconds = timeInSeconds % 60;
-	        if (seconds < 10) {
-	            seconds = "0" + seconds;
-	        }
-	        return minutes + ":" + seconds;
+	    var formatMonth = d3.timeFormat("%B");
+	    var monthFormatter = function monthFormatter(monthNumber) {
+	        var date = new Date(1111, monthNumber - 1, 1);
+	        return formatMonth(date);
 	    };
 	
-	    //d3.axis* Displays automatic reference lines for scales.
 	    // define the x axis
-	    var xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatter).tickSize(8);
+	    var xAxis = d3.axisBottom().scale(x).tickSize(4).tickFormat(d3.format("d"));
+	
+	    var xAxis2 = d3.axisBottom().scale(x2).tickSize(0);
 	
 	    // define the y axis
-	    var yAxis = d3.axisLeft().scale(y);
+	    var yAxis = d3.axisLeft().scale(y).tickSize(0).tickFormat(monthFormatter);
 	
 	    // add the SVG element
-	    var svg = d3.select("body").append("svg").attr("id", "svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom)
-	    //.append("g") appends a 'g' element to the SVG. g element is used to group SVG shapes together, so no it's not d3 specific.
-	    .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	    var svg = d3.select("body").append("svg").attr("id", "svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	
 	    // scale the range of the data
-	    var minSeconds = data[0].Seconds;
-	    var maxSeconds = data[data.length - 1].Seconds;
-	    var difSeconds = maxSeconds - minSeconds;
-	    x.domain([difSeconds, 0]);
-	
-	    //An optional accessor function may be specified, which is equivalent to calling array.map(accessor) before computing the maximum value.
-	    y.domain([d3.max(data, function (d) {
-	        return d.Place + 1;
-	    }), 1]);
+	    x.domain([d3.min(monthlyVariance, function (d) {
+	        return d.year;
+	    }), d3.max(monthlyVariance, function (d) {
+	        return d.year;
+	    })]);
+	    x2.domain(d3.extent(keyArray));
+	    y.domain([d3.max(monthlyVariance, function (d) {
+	        return d.month;
+	    }), d3.min(monthlyVariance, function (d) {
+	        return d.month;
+	    })]);
 	
 	    //title
-	    svg.append("text").attr("x", width / 2).attr("y", 0 - margin.top / 1.5).attr("text-anchor", "middle").style("font-size", "20px").style("text-decoration", "none").text("Doping in Professional Bicycle Racing");
-	    svg.append("text").attr("x", width / 2).attr("y", 0 - margin.top / 3).attr("text-anchor", "middle").style("font-size", "16px").style("text-decoration", "none").html("35 fastest times ascending <a href='https://en.wikipedia.org/wiki/Alpe_dHuez'>Alpe d'Huez</a>");
-	    svg.append("text").attr("x", width / 2).attr("y", 0 - margin.top / 9).attr("text-anchor", "middle").style("font-size", "14px").style("text-decoration", "none").text("Distance normalized to 13.8 km");
+	    svg.append("text").attr("x", width / 2).attr("y", 0 - margin.top / 1.3).attr("text-anchor", "middle").style("font-size", "0.9em").style("text-decoration", "none").text("Monthly Global Land-Surface Temperature");
 	
-	    //Left Side Credits
-	    svg.append("text").attr("x", -120).attr("y", -30).attr("text-anchor", "end").attr("transform", "rotate(-90)").style("font-size", "14px").style("text-decoration", "none").html("Ranking");
+	    //subtitle
+	    svg.append("text").attr("x", width / 2).attr("y", 0 - margin.top / 1.7).attr("text-anchor", "middle").style("font-size", ".6em").style("text-decoration", "none").html("1753-2015");
 	
-	    //Bottom of the page credits
-	    svg.append("text").attr("x", width / 2).attr("y", height + 40).attr("text-anchor", "middle").style("font-size", "14px").style("text-decoration", "none").html("Time trailing the record");
+	    //yAxis title
+	    svg.append("text").attr("x", -40).attr("y", -50).attr("text-anchor", "end").attr("transform", "rotate(-90)").style("font-size", "0.7em").style("text-decoration", "none").html("Month");
+	
+	    //xAxis title
+	    svg.append("text").attr("x", width / 2).attr("y", height + 15).attr("text-anchor", "middle").style("font-size", "0.7em").style("text-decoration", "none").html("Year");
+	
+	    //key description
+	    var keyOffsetX = -30;
+	    var keyLineSpacing = 8;
+	    svg.append("text").attr("x", keyOffsetX).attr("y", height + 4).attr("text-anchor", "middle").style("font-size", "0.4em").style("text-decoration", "none").html("Temperature variance").append("tspan").attr("x", keyOffsetX).attr("dy", keyLineSpacing).html("from base temp of " + baseTemp + "").append("tspan").attr("x", keyOffsetX).attr("dy", keyLineSpacing).html("degrees Celcius.");
 	
 	    // add x axis
-	    //The ‘g’ element is a container element for grouping together related graphics elements.
-	    svg.append("g").attr("class", "x axis").call(xAxis).attr("transform", "translate(0," + height + ")").selectAll("text").style("text-anchor", "end").attr("dx", "1em").attr("dy", "1em");
+	    svg.append("g").attr("class", "xAxis").style("font-size", "0.5em").call(xAxis).attr("transform", "translate(0," + (height - 13) + ")").selectAll("text").style("text-anchor", "end").attr("dx", "1em").attr("dy", "0.5em");
 	
 	    // add y axis
-	    svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 5).attr("dy", ".71em").style("text-anchor", "end").text("Ranking");
+	    svg.append("g").attr("class", "yAxis").style("font-size", "0.5em").call(yAxis).attr("transform", "translate(0,-20)").append("text");
 	
-	    var node = svg.selectAll(".dot").data(data).enter().append("g").attr("class", "node");
+	    var node = svg.selectAll(".bar").data(monthlyVariance).enter().append("g").attr("class", "node");
 	
-	    node.append("circle").attr("class", function (d) {
-	        return d.Doped;
-	    }).attr("r", 3.5).attr("cx", function (d) {
-	        return x(d.Seconds - minSeconds);
-	    }).attr("cy", function (d) {
-	        return y(d.Place);
-	    }).style("background-color", Doped).on("mouseover", function (d) {
-	        d3.select(this).attr("class", "dotSelected").attr("r", 4.5);
-	        tooltip.style("visibility", "visible").style("top", d3.event.pageY + 10 + "px").style("left", d3.event.pageX + "px").html(d.Name + "<br/>" + d.Nationality + "<br/>" + "Time: " + d.Time + "<br/> Year: " + d.Year + "<br/>" + " " + d.Doping);
+	    node.append("rect").attr("class", "bar").attr("x", function (d) {
+	        return x(d.year);
+	    }).attr("width", Math.ceil(width / monthlyVariance.length / 12) + 0.5).attr("y", function (d) {
+	        return y(d.month) - 30;
+	    }).attr("height", height / 12 + 2).style("fill", function (d) {
+	        var red = 0;
+	        var blue = 0;
+	        var green = 200;
+	        var opacity = 1;
+	        if (d.variance >= 0) {
+	            red = Math.ceil(d.variance * 255 / (maxTemp + 0.01));
+	            green -= red;
+	        } else {
+	            blue = Math.ceil(d.variance * 255 / (minTemp + 0.01));
+	            green -= blue;
+	        }
+	
+	        return "rgb(" + (255 - blue) + ", " + green + "," + (255 - red) + ")";
+	    }).on("mouseover", function (d) {
+	        d3.select(this).attr("class", "barSelected");
+	        tooltip.style("visibility", "visible").style("font-size", "0.4em").style("top", d3.event.pageY + 10 + "px").style("left", d3.event.pageX + "px").html("" + monthFormatter(d.month) + " " + d.year + "<br/>" + "Average Temp: " + +(baseTemp + d.variance).toFixed(2) + "&degC<br/>" + "Variance: " + +d.variance.toFixed(2) + "&degC<br/>");
 	    }).on("mousemove", function () {
 	        return tooltip.style("top", event.pageY - 10 + "px").style("left", event.pageX + 10 + "px");
 	    }).on("mouseout", function () {
-	        d3.select(this).attr("r", 3.5).attr("class", function (d) {
-	            return d.Doped;
-	        });
+	        d3.select(this);
 	        tooltip.style("visibility", "hidden");
 	    });
-	    node.append("text").attr("x", function (d) {
-	        return x(d.Seconds - minSeconds) + 5;
-	    }).attr("y", function (d) {
-	        return y(d.Place) + 3;
-	    }).style("font-size", "10px").style("text-decoration", "none").text(function (d) {
-	        return d.Name;
+	
+	    svg.selectAll("key").data(keyArray).enter().append("rect").attr("class", "key").attr("x", function (d) {
+	        return d * 10 + 80;
+	    }).attr("width", 10).attr("y", height + 5).attr("height", 10).style("fill", function (d) {
+	        var red = 0;
+	        var blue = 0;
+	        var green = 200;
+	        var opacity = 1;
+	        if (d >= 0) {
+	            red = Math.ceil(d * 255 / (maxTemp + 0.01));
+	            green -= red;
+	        } else {
+	            blue = Math.ceil(d * 255 / (minTemp + 0.01));
+	            green -= blue;
+	        }
+	        return "rgb(" + (255 - blue) + ", " + green + "," + (255 - red) + ")";
 	    });
+	
+	    svg.append("g").attr("class", "xAxis").style("font-size", "0.3em").call(xAxis2).attr("transform", "translate(10," + (height + 15) + ")").selectAll("text").style("text-anchor", "end").attr("dy", "0.5em");
 	});
 
 /***/ },
@@ -17320,7 +17349,7 @@
 	
 	
 	// module
-	exports.push([module.id, "@font-face {\n  font-family: 'Actor';\n  font-style: normal;\n  font-weight: 400;\n  src: url(" + __webpack_require__(7) + ");\n  src: url(" + __webpack_require__(8) + ") format(\"woff2\");\n  src: url(" + __webpack_require__(9) + ") format(\"woff\");\n  src: url(" + __webpack_require__(10) + "#Actor) format(\"svg\"); }\n\n#svg {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  top: 5vh;\n  position: relative;\n  background-color: rgba(200, 200, 200, 0.8);\n  padding: 1em;\n  width: 600px;\n  bottom: auto;\n  border: solid 1px black;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n\nbody {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  background-image: url(\"http://res.cloudinary.com/dtau8d3ak/image/upload/c_scale,h_1020,w_1181/v1486467485/alpe2_ysnsbq.jpg\");\n  background-color: rgba(20, 20, 20, 0.98);\n  background-repeat: no-repeat;\n  background-position: center;\n  color: white;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.clean {\n  fill: #0073a8; }\n\n.container {\n  display: flex;\n  align-content: center; }\n\n.doped {\n  fill: #ff2400; }\n\n.dot {\n  border: solid 2px #29000b; }\n\n.dotSelected {\n  border: solid 2px black;\n  fill: #7a0001; }\n  .dotSelected .bar:hover {\n    fill: #a50001; }\n  .dotSelected .axis {\n    font: 10px sans-serif; }\n  .dotSelected .axis path,\n  .dotSelected .axis line {\n    fill: none;\n    stroke: #000;\n    shape-rendering: crispEdges; }\n\n.tooltip {\n  font-size: 0.8em;\n  padding: 1em;\n  color: rgba(200, 200, 200, 0.8);\n  background-color: rgba(20, 20, 20, 0.98);\n  border: solid 1px #29000b;\n  width: 10em;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n", ""]);
+	exports.push([module.id, "@font-face {\n  font-family: 'Actor';\n  font-style: normal;\n  font-weight: 400;\n  src: url(" + __webpack_require__(7) + ");\n  src: url(" + __webpack_require__(8) + ") format(\"woff2\");\n  src: url(" + __webpack_require__(9) + ") format(\"woff\");\n  src: url(" + __webpack_require__(10) + "#Actor) format(\"svg\"); }\n\n#svg {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  position: relative;\n  background-color: rgba(200, 200, 200, 0.9);\n  color: rgba(200, 200, 200, 0.9);\n  padding: 1vh;\n  height: 90vh;\n  top: auto;\n  bottom: auto;\n  border: solid 1px black;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n\nbody {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  background-color: rgba(20, 20, 20, 0.98);\n  background-repeat: no-repeat;\n  background-position: center;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.bar .bar:hover {\n  fill: #a50001; }\n\n.container {\n  display: flex;\n  align-content: center; }\n\n.barSelected {\n  border: solid 1px black;\n  fill: #00ff05; }\n  .barSelected .bar:hover {\n    fill: #a50001; }\n\n.axis {\n  font: 10px sans-serif; }\n\n.axis path,\n.axis line {\n  fill: none;\n  stroke: white;\n  shape-rendering: crispEdges; }\n\n.tooltip {\n  font-size: 0.6em;\n  padding: 1em;\n  color: rgba(200, 200, 200, 0.9);\n  background-color: rgba(20, 20, 20, 0.98);\n  border: solid 1px #29000b;\n  width: 11em;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n", ""]);
 	
 	// exports
 

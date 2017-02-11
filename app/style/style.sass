@@ -15,68 +15,59 @@
 
 $IMFell: 'Actor', Helvetica, Arial, serif
 $dotColor: #29000b
-$dotSelected: #7a0001
+$dotSelected: #00ff05
 $charcoal: rgba(20,20,20,0.98)
-$paleWhite: rgba(200,200,200,0.8)
+$paleWhite: rgba(200,200,200,0.9)
 
 #svg
   font-family: $IMFell
-  top: 5vh
   position: relative
   background-color: $paleWhite
-  padding: 1em
-  width: 600px
+  color: $paleWhite
+  padding: 1vh
+  height: 90vh
+  top: auto
   bottom: auto
   border: solid 1px black
   +border-radius(3px)
 
 body
   font-family: $IMFell
-  background-image: url('http://res.cloudinary.com/dtau8d3ak/image/upload/c_scale,h_1020,w_1181/v1486467485/alpe2_ysnsbq.jpg')
   background-color: $charcoal
   background-repeat: no-repeat
   background-position: center
-
-  color: white
   display: flex
   justify-content: center
   align-items: center
-
-.clean
-  fill: #0073a8
+.bar
+  .bar:hover
+    fill: #a50001
 
 .container
   display: flex
   align-content: center
 
-.doped
-  fill: #ff2400
-
-.dot
-  border: solid 2px $dotColor
-
-.dotSelected
-  border: solid 2px black
+.barSelected
+  border: solid 1px black
   fill: $dotSelected
 
   .bar:hover
     fill: #a50001
 
-  .axis 
-    font: 10px sans-serif
+.axis
+  font: 10px sans-serif
 
-  .axis path,
-  .axis line 
-    fill: none
-    stroke: #000
-    shape-rendering: crispEdges
+.axis path,
+.axis line
+  fill: none
+  stroke: white
+  shape-rendering: crispEdges
 
 .tooltip
-  font-size: 0.8em
+  font-size: 0.6em
   padding: 1em
   color: $paleWhite
   background-color: $charcoal
   border: solid 1px $dotColor
-  width: 10em
-  //height: 9em
+  width: 11em
   +border-radius(3px)

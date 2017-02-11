@@ -8,11 +8,12 @@
   src: url("./fonts/actor-v6-latin-regular.svg#Actor") format("svg"); }
 #svg {
   font-family: "Actor", Helvetica, Arial, serif;
-  top: 5vh;
   position: relative;
-  background-color: rgba(200, 200, 200, 0.8);
-  padding: 1em;
-  width: 600px;
+  background-color: rgba(200, 200, 200, 0.9);
+  color: rgba(200, 200, 200, 0.9);
+  padding: 1vh;
+  height: 90vh;
+  top: auto;
   bottom: auto;
   border: solid 1px black;
   -webkit-border-radius: 3px;
@@ -22,48 +23,42 @@
 
 body {
   font-family: "Actor", Helvetica, Arial, serif;
-  background-image: url("http://res.cloudinary.com/dtau8d3ak/image/upload/c_scale,h_1020,w_1181/v1486467485/alpe2_ysnsbq.jpg");
   background-color: rgba(20, 20, 20, 0.98);
   background-repeat: no-repeat;
   background-position: center;
-  color: white;
   display: flex;
   justify-content: center;
   align-items: center; }
 
-.clean {
-  fill: #0073a8; }
+.bar .bar:hover {
+  fill: #a50001; }
 
 .container {
   display: flex;
   align-content: center; }
 
-.doped {
-  fill: #ff2400; }
-
-.dot {
-  border: solid 2px #29000b; }
-
-.dotSelected {
-  border: solid 2px black;
-  fill: #7a0001; }
-  .dotSelected .bar:hover {
+.barSelected {
+  border: solid 1px black;
+  fill: #00ff05; }
+  .barSelected .bar:hover {
     fill: #a50001; }
-  .dotSelected .axis {
-    font: 10px sans-serif; }
-  .dotSelected .axis path,
-  .dotSelected .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges; }
+
+.axis {
+  font: 10px sans-serif; }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: white;
+  shape-rendering: crispEdges; }
 
 .tooltip {
-  font-size: 0.8em;
+  font-size: 0.6em;
   padding: 1em;
-  color: rgba(200, 200, 200, 0.8);
+  color: rgba(200, 200, 200, 0.9);
   background-color: rgba(20, 20, 20, 0.98);
   border: solid 1px #29000b;
-  width: 10em;
+  width: 11em;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   -ms-border-radius: 3px;
