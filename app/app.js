@@ -34,8 +34,8 @@ d3.json(url, (jsonData) => {
 
       // set the dimensions of the canvas
     let margin = {top: 80, right: 40, bottom: 40, left: 70},
-      width = 800 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+      width = 860 - margin.left - margin.right,
+      height = 460 - margin.top - margin.bottom;
 
       // set the ranges
     let x = d3.scaleLinear().range([0, width]);
@@ -98,7 +98,7 @@ d3.json(url, (jsonData) => {
     let axisTitles = "0.9em";
         //yAxis title
     svg.append("text")
-        .attr("x", -70)
+        .attr("x", -100)
         .attr("y", -40)
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
@@ -122,7 +122,7 @@ d3.json(url, (jsonData) => {
         .attr("class", "xAxis")
         .style("font-size","0.5em")
         .call(xAxis)
-        .attr("transform", "translate(0," + (height -5) + ")")
+        .attr("transform", "translate(0," + (height) + ")")
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "1em")

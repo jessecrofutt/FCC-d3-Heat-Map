@@ -94,8 +94,8 @@
 	
 	    // set the dimensions of the canvas
 	    var margin = { top: 80, right: 40, bottom: 40, left: 70 },
-	        width = 800 - margin.left - margin.right,
-	        height = 400 - margin.top - margin.bottom;
+	        width = 860 - margin.left - margin.right,
+	        height = 460 - margin.top - margin.bottom;
 	
 	    // set the ranges
 	    var x = d3.scaleLinear().range([0, width]);
@@ -140,13 +140,13 @@
 	
 	    var axisTitles = "0.9em";
 	    //yAxis title
-	    svg.append("text").attr("x", -70).attr("y", -40).attr("text-anchor", "end").attr("transform", "rotate(-90)").style("font-size", axisTitles).style("text-decoration", "none").html("Month");
+	    svg.append("text").attr("x", -100).attr("y", -40).attr("text-anchor", "end").attr("transform", "rotate(-90)").style("font-size", axisTitles).style("text-decoration", "none").html("Month");
 	
 	    //xAxis title
 	    svg.append("text").attr("x", width / 2).attr("y", height + 30).attr("text-anchor", "middle").style("font-size", axisTitles).style("text-decoration", "none").html("Year");
 	
 	    // add x axis
-	    svg.append("g").attr("class", "xAxis").style("font-size", "0.5em").call(xAxis).attr("transform", "translate(0," + (height - 5) + ")").selectAll("text").style("text-anchor", "end").attr("dx", "1em").attr("dy", "0.5em");
+	    svg.append("g").attr("class", "xAxis").style("font-size", "0.5em").call(xAxis).attr("transform", "translate(0," + height + ")").selectAll("text").style("text-anchor", "end").attr("dx", "1em").attr("dy", "0.5em");
 	
 	    // add y axis
 	    svg.append("g").attr("class", "yAxis").style("font-size", "0.5em").call(yAxis).attr("transform", "translate(0,-20)").append("text");
