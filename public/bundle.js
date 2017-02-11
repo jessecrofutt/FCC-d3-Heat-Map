@@ -93,9 +93,9 @@
 	    console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 	
 	    // set the dimensions of the canvas
-	    var margin = { top: 80, right: 40, bottom: 40, left: 70 },
+	    var margin = { top: 80, right: 40, bottom: 50, left: 70 },
 	        width = 860 - margin.left - margin.right,
-	        height = 460 - margin.top - margin.bottom;
+	        height = 480 - margin.top - margin.bottom;
 	
 	    // set the ranges
 	    var x = d3.scaleLinear().range([0, width]);
@@ -146,7 +146,7 @@
 	    svg.append("text").attr("x", width / 2).attr("y", height + 30).attr("text-anchor", "middle").style("font-size", axisTitles).style("text-decoration", "none").html("Year");
 	
 	    // add x axis
-	    svg.append("g").attr("class", "xAxis").style("font-size", "0.5em").call(xAxis).attr("transform", "translate(0," + height + ")").selectAll("text").style("text-anchor", "end").attr("dx", "1em").attr("dy", "0.5em");
+	    svg.append("g").attr("class", "xAxis").style("font-size", "0.5em").call(xAxis).attr("transform", "translate(0," + (height + 2) + ")").selectAll("text").style("text-anchor", "end").attr("dx", "1em").attr("dy", "0.5em");
 	
 	    // add y axis
 	    svg.append("g").attr("class", "yAxis").style("font-size", "0.5em").call(yAxis).attr("transform", "translate(0,-20)").append("text");
@@ -173,7 +173,7 @@
 	        return "rgb(" + (255 - blue) + ", " + green + "," + (255 - red) + ")";
 	    }).on("mouseover", function (d) {
 	        d3.select(this).attr("class", "barSelected");
-	        tooltip.style("visibility", "visible").style("font-size", "0.5em").style("top", d3.event.pageY + 10 + "px").style("left", d3.event.pageX + "px").html("" + monthFormatter(d.month) + " " + d.year + "<br/>" + "Average Temp: " + +(baseTemp + d.variance).toFixed(2) + "&degC<br/>" + "Variance: " + +d.variance.toFixed(2) + "&degC<br/>");
+	        tooltip.style("visibility", "visible").style("font-size", "0.6em").style("top", d3.event.pageY + 10 + "px").style("left", d3.event.pageX + "px").html("" + monthFormatter(d.month) + " " + d.year + "<br/>" + "Average Temp: " + +(baseTemp + d.variance).toFixed(2) + "&degC<br/>" + "Variance: " + +d.variance.toFixed(2) + "&degC<br/>");
 	    }).on("mousemove", function () {
 	        return tooltip.style("top", event.pageY - 10 + "px").style("left", event.pageX + 10 + "px");
 	    }).on("mouseout", function () {
@@ -201,7 +201,7 @@
 	    //key description
 	    var keyOffsetX = 50;
 	    var keyLineSpacing = 8;
-	    svg.append("text").attr("x", keyOffsetX).attr("y", height + 20).attr("text-anchor", "middle").style("font-size", "0.5em").style("text-decoration", "none").html("Temperature variance").append("tspan").attr("x", keyOffsetX).attr("dy", keyLineSpacing).html("from base temp of " + baseTemp + "").append("tspan").attr("x", keyOffsetX).attr("dy", keyLineSpacing).html("degrees Celcius.");
+	    svg.append("text").attr("x", keyOffsetX).attr("y", height + 24).attr("text-anchor", "middle").style("font-size", "0.5em").style("text-decoration", "none").html("Temperature variance").append("tspan").attr("x", keyOffsetX).attr("dy", keyLineSpacing).html("from base temp of " + baseTemp + "").append("tspan").attr("x", keyOffsetX).attr("dy", keyLineSpacing).html("degrees Celcius.");
 	
 	    //key axis
 	    svg.append("g").attr("class", "xAxis").style("font-size", "0.5em").call(xAxis2).attr("transform", "translate(107," + (height + 29) + ")").selectAll("text").style("text-anchor", "end").attr("dy", ".8em").attr("dx", ".5em");
@@ -17349,7 +17349,7 @@
 	
 	
 	// module
-	exports.push([module.id, "@font-face {\n  font-family: 'Actor';\n  font-style: normal;\n  font-weight: 400;\n  src: url(" + __webpack_require__(7) + ");\n  src: url(" + __webpack_require__(8) + ") format(\"woff2\");\n  src: url(" + __webpack_require__(9) + ") format(\"woff\");\n  src: url(" + __webpack_require__(10) + "#Actor) format(\"svg\"); }\n\n#svg {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  position: relative;\n  background-color: rgba(200, 200, 200, 0.9);\n  color: rgba(200, 200, 200, 0.9);\n  padding: 1vh;\n  top: auto;\n  bottom: auto;\n  border: solid 1px black;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n\nbody {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  background-color: rgba(20, 20, 20, 0.98);\n  background-repeat: no-repeat;\n  background-position: center;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.bar .bar:hover {\n  fill: #a50001; }\n\n.container {\n  display: flex;\n  align-content: center; }\n\n.barSelected {\n  border: solid 1px black;\n  fill: #00ff05; }\n  .barSelected .bar:hover {\n    fill: #a50001; }\n\n.axis {\n  font: 10px sans-serif; }\n\n.axis path,\n.axis line {\n  fill: none;\n  stroke: white;\n  shape-rendering: crispEdges; }\n\n.tooltip {\n  font-size: 0.6em;\n  padding: 1em;\n  color: rgba(200, 200, 200, 0.9);\n  background-color: rgba(20, 20, 20, 0.98);\n  border: solid 1px #29000b;\n  width: 11em;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n", ""]);
+	exports.push([module.id, "@font-face {\n  font-family: 'Actor';\n  font-style: normal;\n  font-weight: 400;\n  src: url(" + __webpack_require__(7) + ");\n  src: url(" + __webpack_require__(8) + ") format(\"woff2\");\n  src: url(" + __webpack_require__(9) + ") format(\"woff\");\n  src: url(" + __webpack_require__(10) + "#Actor) format(\"svg\"); }\n\n#svg {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  position: relative;\n  background-color: rgba(200, 200, 200, 0.9);\n  color: rgba(200, 200, 200, 0.9);\n  padding: 1vh;\n  top: auto;\n  bottom: auto;\n  border: solid 1px black;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n\nbody {\n  font-family: \"Actor\", Helvetica, Arial, serif;\n  background-color: rgba(20, 20, 20, 0.98);\n  background-repeat: no-repeat;\n  background-position: center;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.bar .bar:hover {\n  fill: #a50001; }\n\n.container {\n  display: flex;\n  align-content: center; }\n\n.barSelected {\n  border: solid 1px black;\n  fill: #00ff05; }\n  .barSelected .bar:hover {\n    fill: #a50001; }\n\n.axis {\n  font: 10px sans-serif; }\n\n.axis path,\n.axis line {\n  fill: none;\n  stroke: white;\n  shape-rendering: crispEdges; }\n\n.tooltip {\n  font-size: 0.6em;\n  padding: 1em;\n  color: rgba(200, 200, 200, 0.9);\n  background-color: rgba(20, 20, 20, 0.98);\n  border: solid 1px #29000b;\n  width: 12em;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  border-radius: 3px; }\n", ""]);
 	
 	// exports
 

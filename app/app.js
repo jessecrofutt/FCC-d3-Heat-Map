@@ -33,9 +33,9 @@ d3.json(url, (jsonData) => {
     console.log("monthlyVariance[1]" + monthlyVariance[1].month);
 
       // set the dimensions of the canvas
-    let margin = {top: 80, right: 40, bottom: 40, left: 70},
+    let margin = {top: 80, right: 40, bottom: 50, left: 70},
       width = 860 - margin.left - margin.right,
-      height = 460 - margin.top - margin.bottom;
+      height = 480 - margin.top - margin.bottom;
 
       // set the ranges
     let x = d3.scaleLinear().range([0, width]);
@@ -122,7 +122,7 @@ d3.json(url, (jsonData) => {
         .attr("class", "xAxis")
         .style("font-size","0.5em")
         .call(xAxis)
-        .attr("transform", "translate(0," + (height) + ")")
+        .attr("transform", "translate(0," + (height + 2) + ")")
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "1em")
@@ -167,7 +167,7 @@ d3.json(url, (jsonData) => {
             d3.select(this)
                 .attr("class", "barSelected")
             tooltip.style("visibility", "visible")
-                .style("font-size", "0.5em")
+                .style("font-size", "0.6em")
                 .style("top", (d3.event.pageY + 10) + "px")
                 .style("left", (d3.event.pageX) + "px")
                 .html(""+monthFormatter(d.month)+" "+d.year + "<br/>" +
@@ -208,7 +208,7 @@ d3.json(url, (jsonData) => {
     let keyLineSpacing = 8;
     svg.append("text")
         .attr("x", keyOffsetX)
-        .attr("y", height + 20)
+        .attr("y", height + 24)
         .attr("text-anchor", "middle")
         .style("font-size", "0.5em")
         .style("text-decoration", "none")
